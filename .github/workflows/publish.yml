@@ -8,6 +8,8 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout code
@@ -28,6 +30,13 @@ jobs:
       - name: Build library
         run: npm run build --workspace=@jql/json-sql-explorer
 
+      - name: Get package version
+        id: package-version
+        run: |
+          VERSION=$(node -p "require('./packages/json-sql-explorer/package.json').version")
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Publishing version: ${VERSION}"
+
       - name: Publish to npm
         run: |
           cd packages/json-sql-explorer
@@ -36,11 +45,36 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create GitHub Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          body: |
+            ## 🚀 Release ${{ github.ref_name }}
+
+            Published to npm: [@jql/json-sql-explorer@${{ steps.package-version.outputs.version }}](https://www.npmjs.com/package/@jql/json-sql-explorer/v/${{ steps.package-version.outputs.version }})
+
+            ### Installation
+            ```bash
+            npm install @jql/json-sql-explorer@${{ steps.package-version.outputs.version }}
+            ```
+
+            ### Changes
+            See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/packages/json-sql-explorer/CHANGELOG.md)
           draft: false
           prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Summary
+        run: |
+          echo "### 📦 Successfully published to npm!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Package: [@jql/json-sql-explorer](https://www.npmjs.com/package/@jql/json-sql-explorer)" >> $GITHUB_STEP_SUMMARY
+          echo "- Version: \`${{ steps.package-version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Tag: \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Installation" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "npm install @jql/json-sql-explorer@${{ steps.package-version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY

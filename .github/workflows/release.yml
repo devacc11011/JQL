@@ -15,6 +15,8 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout code
@@ -42,27 +44,53 @@ jobs:
       - name: Build library
         run: npm run build --workspace=@jql/json-sql-explorer
 
-      - name: Bump version
+      - name: Bump version and create tag
         id: version
         run: |
           cd packages/json-sql-explorer
           NEW_VERSION=$(npm version ${{ github.event.inputs.version }} --no-git-tag-version)
-          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "new_version=${NEW_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Created version: ${NEW_VERSION}"
           cd ../..
-          git add packages/json-sql-explorer/package.json
-          git commit -m "chore: bump version to $NEW_VERSION"
-          git tag $NEW_VERSION
-          git push origin main
-          git push origin $NEW_VERSION
+
+      - name: Commit version bump
+        run: |
+          git add packages/json-sql-explorer/package.json package-lock.json
+          git commit -m "chore: release ${{ steps.version.outputs.new_version }}"
+
+      - name: Create git tag
+        run: |
+          git tag "${{ steps.version.outputs.new_version }}"
+          echo "Created tag: ${{ steps.version.outputs.new_version }}"
 
       - name: Update CHANGELOG
         run: |
-          echo "## ${{ steps.version.outputs.new_version }} - $(date +'%Y-%m-%d')" >> TEMP_CHANGELOG.md
-          echo "" >> TEMP_CHANGELOG.md
-          echo "Release created via GitHub Actions" >> TEMP_CHANGELOG.md
-          echo "" >> TEMP_CHANGELOG.md
-          cat packages/json-sql-explorer/CHANGELOG.md >> TEMP_CHANGELOG.md
-          mv TEMP_CHANGELOG.md packages/json-sql-explorer/CHANGELOG.md
+          cd packages/json-sql-explorer
+          {
+            echo "## ${{ steps.version.outputs.new_version }} - $(date +'%Y-%m-%d')"
+            echo ""
+            echo "Release created via GitHub Actions"
+            echo ""
+            cat CHANGELOG.md
+          } > TEMP_CHANGELOG.md
+          mv TEMP_CHANGELOG.md CHANGELOG.md
+          cd ../..
           git add packages/json-sql-explorer/CHANGELOG.md
-          git commit -m "docs: update CHANGELOG for ${{ steps.version.outputs.new_version }}" || true
-          git push origin main || true
+          git commit -m "docs: update CHANGELOG for ${{ steps.version.outputs.new_version }}" || echo "No CHANGELOG changes"
+
+      - name: Push changes and tag
+        run: |
+          git push origin main
+          git push origin "${{ steps.version.outputs.new_version }}"
+          echo "✅ Pushed version ${{ steps.version.outputs.new_version }}"
+          echo "🚀 This will trigger the publish workflow automatically"
+
+      - name: Summary
+        run: |
+          echo "### 🎉 Release ${{ steps.version.outputs.new_version }} created successfully!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Version: \`${{ steps.version.outputs.new_version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Tag pushed to repository" >> $GITHUB_STEP_SUMMARY
+          echo "- Publish workflow will trigger automatically" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Check the [Publish workflow](../../actions/workflows/publish.yml) for npm deployment status." >> $GITHUB_STEP_SUMMARY
