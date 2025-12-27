@@ -1,3 +1,7 @@
+## v0.1.1 - 2025-12-27
+
+Release created via GitHub Actions
+
 # @jql/json-sql-explorer
 
 ## [0.1.0] - 2024-12-27
