@@ -1,0 +1,31 @@
+# Source files
+src/
+*.test.ts
+*.test.tsx
+**/__tests__/
+
+# Config files
+tsconfig.json
+tsup.config.ts
+vitest.config.ts
+.eslintrc.json
+.prettierrc.json
+
+# Build artifacts
+*.tsbuildinfo
+
+# Development
+node_modules/
+.DS_Store
+*.log
+
+# Documentation
+*.md
+!README.md
+
+# Git
+.git/
+.gitignore
+
+# CI/CD
+.github/

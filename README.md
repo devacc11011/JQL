@@ -1,5 +1,9 @@
 # JQL - JSON Query Language
 
+[![npm version](https://badge.fury.io/js/@jql%2Fjson-sql-explorer.svg)](https://badge.fury.io/js/@jql%2Fjson-sql-explorer)
+[![Test](https://github.com/YOUR_USERNAME/jql/actions/workflows/test.yml/badge.svg)](https://github.com/YOUR_USERNAME/jql/actions/workflows/test.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Browser-based JSON to SQL query explorer for Next.js and React applications.
 
 Query your JSON data using SQL syntax with Monaco Editor auto-completion powered by AlaSQL.
@@ -245,6 +249,24 @@ npm run test --workspace=@jql/json-sql-explorer
 
 ## Publishing
 
+This project uses GitHub Actions for automated publishing to npm.
+
+### Automated Release (Recommended)
+
+1. Go to GitHub Actions tab
+2. Select "Release" workflow
+3. Click "Run workflow"
+4. Choose version type (patch/minor/major)
+5. The workflow will automatically:
+   - Run tests
+   - Build library
+   - Bump version
+   - Create git tag
+   - Publish to npm
+   - Create GitHub release
+
+### Manual Publishing
+
 ```bash
 # Build library
 cd packages/json-sql-explorer
@@ -253,9 +275,22 @@ npm run build
 # Update version
 npm version patch|minor|major
 
-# Publish to npm
+# Push tag (triggers auto-publish)
+git push origin main --tags
+
+# Or publish manually
 npm publish --access public
 ```
+
+**Setup Required**: Add `NPM_TOKEN` to GitHub repository secrets. See [.github/DEPLOYMENT.md](.github/DEPLOYMENT.md) for detailed instructions.
+
+### CI/CD Workflows
+
+- **Test**: Runs on every push/PR to main/develop
+- **Publish**: Runs when version tags are pushed
+- **Release**: Manual workflow to create releases
+
+See [Deployment Guide](.github/DEPLOYMENT.md) for complete documentation.
 
 ## Known Issues
 
