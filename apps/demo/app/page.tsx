@@ -6,7 +6,7 @@ import { useState } from 'react';
 // Dynamic import to avoid SSR issues with Monaco
 const JsonSqlExplorer = dynamic(
   () =>
-    import('@jql/json-sql-explorer').then((mod) => ({
+    import('browser-json-sql').then((mod) => ({
       default: mod.JsonSqlExplorer,
     })),
   { ssr: false }

@@ -39,10 +39,10 @@ jobs:
         run: npm ci
 
       - name: Run tests
-        run: npm run test --workspace=@jql/json-sql-explorer
+        run: npm run test --workspace=browser-json-sql
 
       - name: Build library
-        run: npm run build --workspace=@jql/json-sql-explorer
+        run: npm run build --workspace=browser-json-sql
 
       - name: Bump version and create tag
         id: version

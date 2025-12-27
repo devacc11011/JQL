@@ -25,10 +25,10 @@ jobs:
         run: npm ci
 
       - name: Run tests
-        run: npm run test --workspace=@jql/json-sql-explorer
+        run: npm run test --workspace=browser-json-sql
 
       - name: Build library
-        run: npm run build --workspace=@jql/json-sql-explorer
+        run: npm run build --workspace=browser-json-sql
 
       - name: Get package version
         id: package-version
@@ -52,11 +52,11 @@ jobs:
           body: |
             ## 🚀 Release ${{ github.ref_name }}
 
-            Published to npm: [@jql/json-sql-explorer@${{ steps.package-version.outputs.version }}](https://www.npmjs.com/package/@jql/json-sql-explorer/v/${{ steps.package-version.outputs.version }})
+            Published to npm: [browser-json-sql@${{ steps.package-version.outputs.version }}](https://www.npmjs.com/package/browser-json-sql/v/${{ steps.package-version.outputs.version }})
 
             ### Installation
             ```bash
-            npm install @jql/json-sql-explorer@${{ steps.package-version.outputs.version }}
+            npm install browser-json-sql@${{ steps.package-version.outputs.version }}
             ```
 
             ### Changes
@@ -70,11 +70,11 @@ jobs:
         run: |
           echo "### 📦 Successfully published to npm!" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- Package: [@jql/json-sql-explorer](https://www.npmjs.com/package/@jql/json-sql-explorer)" >> $GITHUB_STEP_SUMMARY
+          echo "- Package: [browser-json-sql](https://www.npmjs.com/package/browser-json-sql)" >> $GITHUB_STEP_SUMMARY
           echo "- Version: \`${{ steps.package-version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- Tag: \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Installation" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
-          echo "npm install @jql/json-sql-explorer@${{ steps.package-version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "npm install browser-json-sql@${{ steps.package-version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY

@@ -27,13 +27,13 @@ jobs:
         run: npm ci
 
       - name: Run linter
-        run: npm run lint --workspace=@jql/json-sql-explorer
+        run: npm run lint --workspace=browser-json-sql
 
       - name: Run tests
-        run: npm run test --workspace=@jql/json-sql-explorer
+        run: npm run test --workspace=browser-json-sql
 
       - name: Build library
-        run: npm run build --workspace=@jql/json-sql-explorer
+        run: npm run build --workspace=browser-json-sql
 
       - name: Build demo app
         run: npm run build --workspace=demo

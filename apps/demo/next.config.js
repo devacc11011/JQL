@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ['@jql/json-sql-explorer'],
+  transpilePackages: ['browser-json-sql'],
   webpack: (config, { isServer }) => {
     // Monaco editor requires this
     config.module.rules.push({
